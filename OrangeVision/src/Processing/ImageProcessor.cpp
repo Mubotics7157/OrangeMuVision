@@ -43,6 +43,8 @@ void ImageProcessor::getOutput(nlohmann::json& output) const {
 void ImageProcessor::process() {
 	cv::Mat img;
 	unsigned int lastId = 0;
+	double total = 0;
+	unsigned long iter = 0;
 	while (isRunning.load(std::memory_order_acquire)) {
 		auto start = std::chrono::high_resolution_clock::now();
 		std::unique_lock<std::mutex> streamLock(m_streamLock);
@@ -57,13 +59,17 @@ void ImageProcessor::process() {
 					funcLock.unlock();
 					std::unique_lock<std::shared_mutex> jsonLock(m_jsonLock);
 					m_latestOutput = output;
-					auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
-					std::cout << duration.count() << std::endl;
 				}
 			}
 		} else {
 			streamLock.lock();
 			m_imgStream->waitForNextWrite(lastId);
 		}
+
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
+		++iter;
+		total += duration.count();
+		double avg = total / iter;
+		std::cout << avg << std::endl;
 	}
 }
