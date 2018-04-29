@@ -2,19 +2,20 @@
 
 namespace CameraUtils {
 	void ConcurrentMat::write(cv::VideoCapture& capture) {
-		if (capture.isOpened()) {
+		if (capture.isOpened()) {			
 			if (capture.grab()) {
+				capture.retrieve(m_imgBuffer);
 				std::unique_lock<std::shared_mutex> imgLock(m_imgLock);
-				capture.retrieve(m_lastImg);
+				m_lastImg = m_imgBuffer.clone();
 				imgLock.unlock();
 				std::unique_lock<std::mutex> signalLock(m_signalLock);
 				++m_imgId;
 				signalLock.unlock();
 				signalNew.notify_all();
-			}
-			else {
+			} else {
 				capture.release();
 			}
+			
 		}
 	}
 

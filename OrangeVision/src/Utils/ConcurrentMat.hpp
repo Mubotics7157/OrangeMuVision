@@ -13,7 +13,7 @@ namespace CameraUtils {
 	private:
 		mutable std::shared_mutex m_imgLock;
 		mutable std::mutex m_signalLock;
-		cv::Mat m_lastImg;
+		cv::Mat m_lastImg, m_imgBuffer;
 		unsigned int m_imgId;
 		std::condition_variable signalNew;
 	};
