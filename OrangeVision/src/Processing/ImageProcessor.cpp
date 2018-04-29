@@ -1,4 +1,5 @@
 #include "ImageProcessor.hpp"
+#include <chrono>
 
 ImageProcessor::ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream) : m_imgStream(imgStream) {
 
@@ -43,6 +44,7 @@ void ImageProcessor::process() {
 	cv::Mat img;
 	unsigned int lastId = 0;
 	while (isRunning.load(std::memory_order_acquire)) {
+		auto start = std::chrono::high_resolution_clock::now();
 		std::unique_lock<std::mutex> streamLock(m_streamLock);
 		unsigned int imgId = m_imgStream->read(img);
 		streamLock.unlock();
@@ -55,6 +57,8 @@ void ImageProcessor::process() {
 					funcLock.unlock();
 					std::unique_lock<std::shared_mutex> jsonLock(m_jsonLock);
 					m_latestOutput = output;
+					auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
+					std::cout << duration.count() << std::endl;
 				}
 			}
 		} else {

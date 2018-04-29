@@ -10,8 +10,11 @@
 #include "Utils\ImageReader.hpp"
 
 nlohmann::json testFunc(cv::Mat& img) {
+	cv::Mat threshold;
+	cv::cvtColor(img, threshold, cv::COLOR_BGR2HSV);
+	cv::inRange(threshold, cv::Scalar(45, 100, 50), cv::Scalar(80, 255, 255), threshold);
 	nlohmann::json json;
-	cv::imshow("test", img);
+	cv::imshow("test", threshold);
 	cv::waitKey(1);
 	return json;
 }
@@ -19,7 +22,7 @@ nlohmann::json testFunc(cv::Mat& img) {
 int main() {
 	std::shared_ptr<CameraUtils::ConcurrentMat> stream = std::make_shared<CameraUtils::ConcurrentMat>();
 	ImageReader reader(stream);
-	reader.open(0); // Writes VideoCapture(0).read() into ConcurrentMat
+	reader.open("C:/Users/Roth Vann/Documents/test1.mp4"); // Writes VideoCapture(0).read() into ConcurrentMat
 	ImageProcessor processor(stream); // Reads from ConcurrentMat
 	processor.setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.
 	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a 

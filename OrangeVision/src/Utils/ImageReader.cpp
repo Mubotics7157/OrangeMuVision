@@ -41,8 +41,5 @@ void ImageReader::process() {
 	while (isRunning.load(std::memory_order_acquire)) {
 		std::unique_lock<std::mutex> streamLock(m_streamLock);
 		m_imgStream->write(m_capture);
-		/*
-		cv::waitKey(10);
-		*/
 	}
 }
