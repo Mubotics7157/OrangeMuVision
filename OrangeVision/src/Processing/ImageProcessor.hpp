@@ -5,12 +5,13 @@
 #include <atomic>
 #include <thread>
 #include <functional>
-#include "CameraUtils.hpp"
+#include "Utils\ConcurrentMat.hpp"
 #include "nholmann\json.hpp"
 
 class ImageProcessor {
 public:
 	ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
+	~ImageProcessor();
 	void setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
 	void setProcessingFunction(std::function<nlohmann::json(cv::Mat& img)> processingFunc);
 	void start();
@@ -18,7 +19,8 @@ public:
 	void getOutput(nlohmann::json& output) const;
 private:
 	void process();
-	std::shared_ptr<CameraUtils::ConcurrentMat> imgStream;
+	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
+	std::mutex m_streamLock;
 	std::mutex m_funcLock;
 	mutable std::shared_mutex m_jsonLock;
 	std::atomic<bool> isRunning = false;

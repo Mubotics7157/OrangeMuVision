@@ -1,11 +1,16 @@
 #include "ImageProcessor.hpp"
 
-ImageProcessor::ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream) : imgStream(imgStream) {
+ImageProcessor::ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream) : m_imgStream(imgStream) {
 
 }
 
+ImageProcessor::~ImageProcessor() {
+	stop();
+}
+
 void ImageProcessor::setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream) {
-	this->imgStream = imgStream;
+	std::unique_lock<std::mutex> streamLock(m_streamLock);
+	m_imgStream = imgStream;
 }
 
 void ImageProcessor::setProcessingFunction(std::function<nlohmann::json(cv::Mat& img)> processingFunc) {
@@ -38,18 +43,23 @@ void ImageProcessor::process() {
 	cv::Mat img;
 	unsigned int lastId = 0;
 	while (isRunning.load(std::memory_order_acquire)) {
-		unsigned int imgId = imgStream->read(img);
+		std::unique_lock<std::mutex> streamLock(m_streamLock);
+		unsigned int imgId = m_imgStream->read(img);
+		streamLock.unlock();
 		if (lastId != imgId) {
 			lastId = imgId;
 			std::unique_lock<std::mutex> funcLock(m_funcLock);
 			if (m_processingFunc) {
-				nlohmann::json output = m_processingFunc(img);
-				funcLock.unlock();
-				std::unique_lock<std::shared_mutex> jsonLock(m_jsonLock);
-				m_latestOutput = output;
+				if (!img.empty()) {
+					nlohmann::json output = m_processingFunc(img);
+					funcLock.unlock();
+					std::unique_lock<std::shared_mutex> jsonLock(m_jsonLock);
+					m_latestOutput = output;
+				}
 			}
 		} else {
-			imgStream->waitForNextWrite(lastId);
+			streamLock.lock();
+			m_imgStream->waitForNextWrite(lastId);
 		}
 	}
 }

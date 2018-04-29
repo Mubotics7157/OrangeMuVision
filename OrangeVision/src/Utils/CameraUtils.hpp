@@ -2,9 +2,8 @@
 #ifndef CAMERA_UTILS_H_
 #define CAMERA_UTILS_H_
 #include <vector>
-#include <shared_mutex>
 #include <opencv2\opencv.hpp>
-#include <condition_variable>
+#include "Utils\ConcurrentMat.hpp"
 
 namespace CameraUtils {
 	class Calibrator {
@@ -20,17 +19,11 @@ namespace CameraUtils {
 		std::vector<std::vector<cv::Point2f>> m_imagePoints;
 	};
 
-	class ConcurrentMat {
-	public:
-		void write(cv::VideoCapture& capture);
-		int read(cv::Mat& image) const;
-		void waitForNextWrite(unsigned int currentImgId);
-	private:
-		mutable std::shared_mutex m_imgLock;
-		mutable std::mutex m_signalLock;
-		cv::Mat m_lastImg;
-		unsigned int m_imgId;
-		std::condition_variable signalNew;
-	};
+	void ImageReader(std::shared_ptr<CameraUtils::ConcurrentMat> stream, const char* filename) {
+		cv::VideoCapture capture(filename);
+		while (true) {
+			stream->write(capture);
+		}
+	}
 }
 #endif
