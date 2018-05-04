@@ -18,12 +18,5 @@ namespace CameraUtils {
 		std::vector<std::vector<cv::Point3f>> m_objectPoints;
 		std::vector<std::vector<cv::Point2f>> m_imagePoints;
 	};
-
-	void ImageReader(std::shared_ptr<CameraUtils::ConcurrentMat> stream, const char* filename) {
-		cv::VideoCapture capture(filename);
-		while (true) {
-			stream->write(capture);
-		}
-	}
 }
 #endif

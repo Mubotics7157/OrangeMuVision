@@ -22,7 +22,7 @@ nlohmann::json testFunc(cv::Mat& img) {
 int main() {
 	std::shared_ptr<CameraUtils::ConcurrentMat> stream = std::make_shared<CameraUtils::ConcurrentMat>();
 	ImageReader reader(stream);
-	reader.open(0); // Writes VideoCapture(0).read() into ConcurrentMat
+	reader.open("C:/Users/Roth Vann/Documents/hey.avi"); // Writes VideoCapture(0).read() into ConcurrentMat
 	ImageProcessor processor(stream); // Reads from ConcurrentMat
 	processor.setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.
 	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a 

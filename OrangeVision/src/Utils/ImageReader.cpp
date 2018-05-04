@@ -39,7 +39,13 @@ void ImageReader::stop() {
 
 void ImageReader::process() {
 	while (isRunning.load(std::memory_order_acquire)) {
-		std::unique_lock<std::mutex> streamLock(m_streamLock);
-		m_imgStream->write(m_capture);
+		if (m_capture.isOpened()) {
+			if (m_capture.grab()) {
+				m_capture.retrieve(m_imgBuffer);
+				m_imgStream->write(m_imgBuffer);
+			} else {
+				m_capture.release();
+			}
+		}
 	}
 }

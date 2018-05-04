@@ -23,6 +23,7 @@ private:
 	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
 	std::unique_ptr<std::thread> m_processingThread{ nullptr };
 	cv::VideoCapture m_capture;
+	cv::Mat m_imgBuffer;
 
 };
 

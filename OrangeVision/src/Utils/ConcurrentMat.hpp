@@ -7,13 +7,18 @@
 namespace CameraUtils {
 	class ConcurrentMat {
 	public:
-		void write(cv::VideoCapture& capture);
+		enum class WriteStatus {
+			WRITE_SUCCESS = 0,
+			GRAB_FAILED = 1,
+			CAMERA_CLOSED = 2			
+		};
+		int write(cv::Mat& image);
 		int read(cv::Mat& image) const;
 		void waitForNextWrite(unsigned int currentImgId);
 	private:
 		mutable std::shared_mutex m_imgLock;
 		mutable std::mutex m_signalLock;
-		cv::Mat m_lastImg, m_imgBuffer;
+		cv::Mat m_lastImg;
 		unsigned int m_imgId;
 		std::condition_variable signalNew;
 	};
