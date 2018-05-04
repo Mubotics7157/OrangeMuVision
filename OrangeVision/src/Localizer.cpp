@@ -29,6 +29,8 @@ int main() {
 	// header only json library we use. 
 	reader.start(); // start reading thread
 	processor.start(); // start processing thread
+	reader.stop();
+	reader.start();
 	//call reader.stop() or processor.stop() to close thread. These threads are guaranteed to close in 200 ms.
 	//Wait is here because reader and processor are cleaned up automatically when the scope exits (aka when the destructor is called)
 	while (true) {
