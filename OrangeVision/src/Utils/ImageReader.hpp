@@ -14,18 +14,11 @@ public:
 	void setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
 	void open(int id);
 	void open(const char* filename);
-	void start();
-	void stop();
-	void release();
+	void update();
 private:
-	void process();
 	std::mutex m_streamLock;
-	std::atomic<bool> isRunning = false;
-	std::atomic<bool> isWriting = false;
-	mutable std::mutex m_signalLock;
 	std::condition_variable m_signalWrite;
 	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
-	std::unique_ptr<std::thread> m_processingThread{ nullptr };
 	cv::VideoCapture m_capture;
 	cv::Mat m_imgBuffer;
 

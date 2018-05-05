@@ -14,18 +14,16 @@ public:
 	~ImageProcessor();
 	void setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
 	void setProcessingFunction(std::function<nlohmann::json(cv::Mat& img)> processingFunc);
-	void start();
-	void stop();
 	void getOutput(nlohmann::json& output) const;
+	void update();
 private:
-	void process();
+	cv::Mat img;
+	unsigned int lastId = 0;
 	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
 	std::mutex m_streamLock;
 	std::mutex m_funcLock;
 	mutable std::shared_mutex m_jsonLock;
-	std::atomic<bool> isRunning = false;
 	std::function<nlohmann::json(cv::Mat& img)> m_processingFunc{ nullptr };
-	std::unique_ptr<std::thread> m_processingThread{ nullptr };
 	nlohmann::json m_latestOutput;
 };
 

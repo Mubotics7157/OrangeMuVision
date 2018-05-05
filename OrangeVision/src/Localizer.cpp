@@ -8,6 +8,7 @@
 #include "nholmann\json.hpp"
 #include "Processing\ImageProcessor.hpp"
 #include "Utils\ImageReader.hpp"
+#include "Utils\OrangeThread.hpp"
 
 nlohmann::json testFunc(cv::Mat& img) {
 	cv::Mat threshold;
@@ -21,17 +22,15 @@ nlohmann::json testFunc(cv::Mat& img) {
 
 int main() {
 	std::shared_ptr<CameraUtils::ConcurrentMat> stream = std::make_shared<CameraUtils::ConcurrentMat>();
-	ImageReader reader(stream);
-	reader.open("C:/Users/Roth Vann/Documents/hey.avi"); // Writes VideoCapture(0).read() into ConcurrentMat
-	ImageProcessor processor(stream); // Reads from ConcurrentMat
-	processor.setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.
+	std::shared_ptr<ImageReader> reader = std::make_shared<ImageReader>(stream);
+	reader->open("C:/Users/Roth Vann/Documents/hey.avi"); // Writes VideoCapture(0).read() into ConcurrentMat
+	std::shared_ptr<ImageProcessor> processor = std::make_shared<ImageProcessor>(stream); // Reads from ConcurrentMat
+	processor->setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.
 	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a 
 	// header only json library we use. 
-	reader.start(); // start reading thread
-	processor.start(); // start processing thread
-	reader.stop();
-	reader.start();
-	//call reader.stop() or processor.stop() to close thread. These threads are guaranteed to close in 200 ms.
+	OrangeThread<ImageReader> readingThread(reader); // create threads
+	OrangeThread<ImageProcessor> processingThread(processor); // they run when they are constructed
+	//call readingThread.stop() to pause threads from running. They automatically terminate when it exits the scope.
 	//Wait is here because reader and processor are cleaned up automatically when the scope exits (aka when the destructor is called)
 	while (true) {
 
