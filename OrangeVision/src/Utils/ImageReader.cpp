@@ -22,7 +22,6 @@ void ImageReader::open(const char* filename) {
 	m_capture = cv::VideoCapture(filename);
 }
 
-//TODO: attempt to restart camera
 void ImageReader::update() {
 	if (m_capture.isOpened()) {
 		if (m_capture.grab()) {

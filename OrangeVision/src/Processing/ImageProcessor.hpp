@@ -8,6 +8,7 @@
 #include "Utils\ConcurrentMat.hpp"
 #include "nholmann\json.hpp"
 
+template <class T>
 class ImageProcessor {
 public:
 	ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
