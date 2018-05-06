@@ -50,7 +50,7 @@ private:
 	std::condition_variable m_signal;
 	std::atomic<bool> isAlive = true;
 	std::atomic<bool> isRunning = true;
-	std::unique_ptr<std::thread> m_thread{ nullptr };
+	std::unique_ptr<std::thread> m_thread;
 	std::shared_ptr<T> m_functor;
 };
 
