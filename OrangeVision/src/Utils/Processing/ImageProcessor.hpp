@@ -5,10 +5,11 @@
 #include <atomic>
 #include <thread>
 #include <functional>
-#include "Utils\ConcurrentMat.hpp"
+#include "Utils\Camera\ConcurrentMat.hpp"
 #include "nholmann\json.hpp"
+#include "Utils\Threading\Updateable.hpp"
 
-class ImageProcessor {
+class ImageProcessor : public Updateable {
 public:
 	ImageProcessor(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
 	~ImageProcessor();

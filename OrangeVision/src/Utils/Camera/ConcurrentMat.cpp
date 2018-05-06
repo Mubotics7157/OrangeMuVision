@@ -1,7 +1,7 @@
 #include "ConcurrentMat.hpp"
 
 namespace CameraUtils {
-	int ConcurrentMat::write(cv::Mat& image) {
+	void ConcurrentMat::write(cv::Mat& image) {
 		std::unique_lock<std::shared_mutex> imgLock(m_imgLock);
 		m_lastImg = image.clone();
 		imgLock.unlock();

@@ -5,21 +5,22 @@
 #include <memory>
 #include <thread>
 #include <mutex>
-#include "Utils\ConcurrentMat.hpp"
+#include "Utils\Camera\ConcurrentMat.hpp"
+#include "Utils\Threading\Updateable.hpp"
 
-class ImageReader {
+class ImageReader : public Updateable {
 public:
-	ImageReader(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
+	ImageReader(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream, std::shared_ptr<cv::VideoCapture> capture);
 	~ImageReader();
 	void setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream);
-	void open(int id);
-	void open(const char* filename);
+	void setCapture(std::shared_ptr<cv::VideoCapture> capture);
 	void update();
 private:
 	std::mutex m_streamLock;
+	std::mutex m_captureLock;
 	std::condition_variable m_signalWrite;
 	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
-	cv::VideoCapture m_capture;
+	std::shared_ptr<cv::VideoCapture> m_capture;
 	cv::Mat m_imgBuffer;
 
 };

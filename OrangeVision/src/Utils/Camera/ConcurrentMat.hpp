@@ -12,7 +12,7 @@ namespace CameraUtils {
 			GRAB_FAILED = 1,
 			CAMERA_CLOSED = 2			
 		};
-		int write(cv::Mat& image);
+		void write(cv::Mat& image);
 		int read(cv::Mat& image) const;
 		void waitForNextWrite(unsigned int currentImgId);
 	private:

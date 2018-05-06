@@ -3,7 +3,7 @@
 #define CAMERA_UTILS_H_
 #include <vector>
 #include <opencv2\opencv.hpp>
-#include "Utils\ConcurrentMat.hpp"
+#include "Utils\Camera\ConcurrentMat.hpp"
 
 namespace CameraUtils {
 	class Calibrator {

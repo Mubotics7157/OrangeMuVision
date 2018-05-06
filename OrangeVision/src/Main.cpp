@@ -6,9 +6,9 @@
 #include <chrono>
 #include <memory>
 #include "nholmann\json.hpp"
-#include "Processing\ImageProcessor.hpp"
-#include "Utils\ImageReader.hpp"
-#include "Utils\OrangeThread.hpp"
+#include "Utils\Processing\ImageProcessor.hpp"
+#include "Utils\Camera\ImageReader.hpp"
+#include "Utils\Threading\OrangeThread.hpp"
 
 nlohmann::json testFunc(cv::Mat& img) {
 	cv::Mat threshold;
@@ -22,14 +22,14 @@ nlohmann::json testFunc(cv::Mat& img) {
 
 int main() {
 	std::shared_ptr<CameraUtils::ConcurrentMat> stream = std::make_shared<CameraUtils::ConcurrentMat>();
-	std::shared_ptr<ImageReader> reader = std::make_shared<ImageReader>(stream);
-	reader->open("C:/Users/Roth Vann/Documents/hey.avi"); // Writes VideoCapture(0).read() into ConcurrentMat
+	std::shared_ptr<cv::VideoCapture> capture = std::make_shared<cv::VideoCapture>(0);
+	std::shared_ptr<ImageReader> reader = std::make_shared<ImageReader>(stream, capture);
 	std::shared_ptr<ImageProcessor> processor = std::make_shared<ImageProcessor>(stream); // Reads from ConcurrentMat
-	processor->setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.
+	processor->setProcessingFunction(&testFunc); // Set whatever function you want the processor to call.	
 	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a 
 	// header only json library we use. 
-	OrangeThread<ImageReader> readingThread(reader); // create threads
-	OrangeThread<ImageProcessor> processingThread(processor); // they run when they are constructed
+	OrangeThread readingThread(reader); // create threads
+	OrangeThread processingThread(processor); // they run when they are constructed
 	//call readingThread.stop() to pause threads from running. They automatically terminate when it exits the scope.
 	//Wait is here because reader and processor are cleaned up automatically when the scope exits (aka when the destructor is called)
 	while (true) {
