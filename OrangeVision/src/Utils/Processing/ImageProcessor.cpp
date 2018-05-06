@@ -24,22 +24,24 @@ void ImageProcessor::getOutput(nlohmann::json& output) const {
 
 void ImageProcessor::update() {
 	std::unique_lock<std::mutex> streamLock(m_streamLock);
-	unsigned int imgId = m_imgStream->read(img);
+	unsigned int imgId = m_imgStream->read(m_img);
 	streamLock.unlock();
-	if (lastId != imgId) {
-		lastId = imgId;
+	if (m_lastId != imgId) {
+		m_lastId = imgId;
 		std::unique_lock<std::mutex> funcLock(m_funcLock);
 		if (m_processingFunc) {
-			if (!img.empty()) {
-				nlohmann::json output = m_processingFunc(img);
+			if (!m_img.empty()) {
+				nlohmann::json output = m_processingFunc(m_img);
 				funcLock.unlock();
-				std::unique_lock<std::shared_mutex> jsonLock(m_jsonLock);
-				m_latestOutput = output;
+				if (m_outputHandler) {
+					m_outputHandler->update(output);
+				}
 			}
 		}
-	} else {
+	}
+	else {
 		streamLock.lock();
-		m_imgStream->waitForNextWrite(lastId);
+		m_imgStream->waitForNextWrite(m_lastId);
 	}
 }
 

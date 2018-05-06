@@ -5,7 +5,7 @@
 #include <memory>
 #include <thread>
 #include <mutex>
-#include "Utils\Camera\ConcurrentMat.hpp"
+#include "Utils\Input\ConcurrentMat.hpp"
 #include "Utils\Threading\Updateable.hpp"
 
 class ImageReader : public Updateable {

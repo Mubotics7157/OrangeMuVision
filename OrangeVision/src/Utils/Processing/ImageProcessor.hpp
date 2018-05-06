@@ -5,9 +5,10 @@
 #include <atomic>
 #include <thread>
 #include <functional>
-#include "Utils\Camera\ConcurrentMat.hpp"
+#include "Utils\Input\ConcurrentMat.hpp"
 #include "nholmann\json.hpp"
 #include "Utils\Threading\Updateable.hpp"
+#include "Utils\Output\OutputHandler.hpp"
 
 class ImageProcessor : public Updateable {
 public:
@@ -18,14 +19,15 @@ public:
 	void getOutput(nlohmann::json& output) const;
 	void update();
 private:
-	cv::Mat img;
-	unsigned int lastId = 0;
+	cv::Mat m_img;
+	unsigned int m_lastId = 0;
 	std::shared_ptr<CameraUtils::ConcurrentMat> m_imgStream;
 	std::mutex m_streamLock;
 	std::mutex m_funcLock;
 	mutable std::shared_mutex m_jsonLock;
-	std::function<nlohmann::json(cv::Mat& img)> m_processingFunc{ nullptr };
+	std::function<nlohmann::json(cv::Mat& img)> m_processingFunc;
 	nlohmann::json m_latestOutput;
+	std::shared_ptr<OutputHandler> m_outputHandler;
 };
 
 #endif
