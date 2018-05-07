@@ -1,6 +1,6 @@
 #include "ImageReader.hpp"
 
-ImageReader::ImageReader(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream, std::shared_ptr<cv::VideoCapture> capture) {
+ImageReader::ImageReader(std::shared_ptr<ConcurrentMat> imgStream, std::shared_ptr<cv::VideoCapture> capture) {
 	std::unique_lock<std::mutex> captureLock(m_streamLock);
 	m_capture = capture;
 	captureLock.unlock();
@@ -14,7 +14,7 @@ ImageReader::~ImageReader() {
 
 }
 
-void ImageReader::setStream(std::shared_ptr<CameraUtils::ConcurrentMat> imgStream) {
+void ImageReader::setStream(std::shared_ptr<ConcurrentMat> imgStream) {
 	std::unique_lock<std::mutex> streamLock(m_streamLock);
 	m_imgStream = imgStream;
 }

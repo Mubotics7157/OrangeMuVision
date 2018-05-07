@@ -3,11 +3,13 @@
 #define ORANGE_THREAD_HPP
 #include <atomic>
 #include <condition_variable>
+#include <vector>
 #include "Utils\Threading\Updateable.hpp"
 
 class OrangeThread {
 public:
-	OrangeThread(std::shared_ptr<Updateable> updater);
+	OrangeThread(const std::vector<std::shared_ptr<Updateable>>& updater);
+	OrangeThread(std::vector<std::shared_ptr<Updateable>>&& updater);
 	~OrangeThread();
 	void start();
 	void stop();
@@ -19,7 +21,7 @@ private:
 	std::atomic<bool> isAlive = true;
 	std::atomic<bool> isRunning = true;
 	std::unique_ptr<std::thread> m_thread{ nullptr };
-	std::shared_ptr<Updateable> m_updater;
+	std::vector<std::shared_ptr<Updateable>> m_updaters;
 };
 
 #endif
