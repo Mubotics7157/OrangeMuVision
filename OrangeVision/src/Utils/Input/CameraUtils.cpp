@@ -33,4 +33,8 @@ namespace CameraUtils {
 		//Failed to open file
 		return false;
 	}
+
+	void copyMat(cv::Mat& toCopy, const cv::Mat& fromCopy) {
+		toCopy = fromCopy.clone();
+	}
 }

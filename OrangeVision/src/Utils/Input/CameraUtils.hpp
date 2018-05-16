@@ -3,7 +3,6 @@
 #define CAMERA_UTILS_H_
 #include <vector>
 #include <opencv2\opencv.hpp>
-#include "Utils\Threading\ConcurrentMat.hpp"
 
 namespace CameraUtils {
 	class Calibrator {
@@ -18,5 +17,7 @@ namespace CameraUtils {
 		std::vector<std::vector<cv::Point3f>> m_objectPoints;
 		std::vector<std::vector<cv::Point2f>> m_imagePoints;
 	};
+
+	void copyMat(cv::Mat& toCopy, const cv::Mat& fromCopy);
 }
 #endif

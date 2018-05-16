@@ -1,26 +1,20 @@
 #include "ImageReader.hpp"
+#include "CameraUtils.hpp"
 
-ImageReader::ImageReader(std::shared_ptr<ConcurrentMat> imgStream, std::shared_ptr<cv::VideoCapture> capture) {
-	std::unique_lock<std::mutex> captureLock(m_streamLock);
+ImageReader::ImageReader(std::shared_ptr<cv::VideoCapture> capture) {
+	std::unique_lock<std::mutex> captureLock(m_captureLock);
 	m_capture = capture;
 	captureLock.unlock();
-	std::unique_lock<std::mutex> streamLock(m_streamLock);
-	m_imgStream = imgStream;
-	streamLock.unlock();
-
+	m_imgStream = std::make_shared<ConcurrentStream<cv::Mat>>(&CameraUtils::copyMat);
 }
 
-ImageReader::~ImageReader() {
-
+std::shared_ptr<ConcurrentStream<cv::Mat>> ImageReader::getImgStream() {
+	return m_imgStream;
 }
 
-void ImageReader::setStream(std::shared_ptr<ConcurrentMat> imgStream) {
-	std::unique_lock<std::mutex> streamLock(m_streamLock);
-	m_imgStream = imgStream;
-}
-
-void ImageReader::setCapture(std::shared_ptr<cv::VideoCapture>) {
-	
+void ImageReader::setCapture(std::shared_ptr<cv::VideoCapture> capture) {
+	std::unique_lock<std::mutex> captureLock(m_captureLock);
+	m_capture = capture;
 }
 
 void ImageReader::update() {
@@ -29,7 +23,6 @@ void ImageReader::update() {
 		if (m_capture->grab()) {
 			m_capture->retrieve(m_imgBuffer);
 			captureLock.unlock();
-			std::unique_lock<std::mutex> streamLock(m_streamLock);
 			m_imgStream->write(m_imgBuffer);
 		} else {
 			m_capture->release();

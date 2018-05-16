@@ -10,16 +10,15 @@
 #include "Utils\Input\ImageReader.hpp"
 #include "Utils\Threading\OrangeThread.hpp"
 #include "Utils\Output\FakeHandler.hpp"
+#include "Utils\Threading\ConcurrentStream.hpp"
 
 
 int main() {
-	std::shared_ptr<ConcurrentMat> imgStream = std::make_shared<ConcurrentMat>();
-	std::shared_ptr<ConcurrentJson> jsonStream = std::make_shared<ConcurrentJson>();
-	std::shared_ptr<cv::VideoCapture> capture = std::make_shared<cv::VideoCapture>("C:/Users/Roth Vann/Documents/hey.avi");
-	std::shared_ptr<FakeHandler> fakeHandler = std::make_shared<FakeHandler>(jsonStream);
-	std::shared_ptr<ImageReader> reader = std::make_shared<ImageReader>(imgStream, capture);
-	std::shared_ptr<TestProcessor> processor = std::make_shared<TestProcessor>(imgStream, jsonStream); // Reads from ConcurrentMat
-	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a 
+	std::shared_ptr<cv::VideoCapture> capture = std::make_shared<cv::VideoCapture>(0);
+	std::shared_ptr<ImageReader> reader = std::make_shared<ImageReader>(capture);
+	std::shared_ptr<TestProcessor> processor = std::make_shared<TestProcessor>(reader->getImgStream()); // Reads from ConcurrentMat
+	std::shared_ptr<FakeHandler> fakeHandler = std::make_shared<FakeHandler>(processor->getJsonOutput());
+	// It needs to take in a cv::Mat& and return a nlohmann::json. nlohmann::json is an object from a
 	// header only json library we use. 
 	OrangeThread readingThread({reader, fakeHandler}); // create threads
 	OrangeThread processingThread({processor}); // they run when they are constructed
