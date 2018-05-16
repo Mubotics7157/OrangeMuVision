@@ -17,11 +17,9 @@ public:
 	void update();
 private:
 	std::mutex m_captureLock;
-	std::condition_variable m_signalWrite;
 	std::shared_ptr<ConcurrentStream<cv::Mat>> m_imgStream;
 	std::shared_ptr<cv::VideoCapture> m_capture;
 	cv::Mat m_imgBuffer;
-
 };
 
 

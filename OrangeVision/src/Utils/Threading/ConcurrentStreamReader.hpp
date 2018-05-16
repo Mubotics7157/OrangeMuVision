@@ -4,6 +4,7 @@
 #include "ConcurrentStream.hpp"
 #include <memory>
 
+//Ensures all reads will get the latest data or wait until there is new data
 template<typename T>
 class ConcurrentStreamReader {
 public:

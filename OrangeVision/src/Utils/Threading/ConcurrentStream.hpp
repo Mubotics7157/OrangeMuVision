@@ -3,6 +3,7 @@
 #define CONCURRENT_STREAM_HPP
 #include <shared_mutex>
 #include <atomic>
+
 template <typename T>
 class ConcurrentStream {
 public:

@@ -23,7 +23,7 @@ void OrangeThread::stop() {
 	isRunning.store(false, std::memory_order_release);
 }
 
-
+//May not exit if thread locks
 void OrangeThread::update() {
 	while (isAlive.load(std::memory_order_acquire)) {
 		if (isRunning.load(std::memory_order_acquire)) {

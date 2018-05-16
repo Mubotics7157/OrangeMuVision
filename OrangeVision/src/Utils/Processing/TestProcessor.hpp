@@ -15,12 +15,10 @@ public:
 	nlohmann::json process(cv::Mat& img) {
 		nlohmann::json json;
 		json["time"] = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).time_since_epoch().count();
-
 		if (!img.empty()) {
-			cv::imshow("test", img);
+			//cv::imshow("test", img);
 			cv::waitKey(1);
-		}
-		
+		}		
 		return json;
 	}
 	

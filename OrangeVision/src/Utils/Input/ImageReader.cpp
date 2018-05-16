@@ -5,6 +5,7 @@ ImageReader::ImageReader(std::shared_ptr<cv::VideoCapture> capture) {
 	std::unique_lock<std::mutex> captureLock(m_captureLock);
 	m_capture = capture;
 	captureLock.unlock();
+	//cv::Mat operator = does a shallow copy
 	m_imgStream = std::make_shared<ConcurrentStream<cv::Mat>>(&CameraUtils::copyMat);
 }
 
