@@ -3,16 +3,24 @@
 #define FAKE_HANDLER_HPP
 #include <iostream>
 #include <nholmann\json.hpp>
-#include "OutputHandler.hpp"
+#include "Utils\Threading\Updateable.hpp"
 
-class FakeHandler : public OutputHandler {
+class FakeHandler : public Updateable {
 public:
-	FakeHandler(std::shared_ptr<ConcurrentJson> inputStream) : OutputHandler(inputStream) {
+	FakeHandler(std::shared_ptr<ConcurrentStream<nlohmann::json>> inputStream) : m_inputStream(inputStream) {
 	}
 
 	void process(nlohmann::json& json) {
 		std::cout << json.dump(4) << std::endl;
 	}
+	 
+	void update() {
+		m_inputStream.read(m_data);
+		process(m_data);
+	}
+private:
+	ConcurrentStreamReader<nlohmann::json> m_inputStream;
+	nlohmann::json m_data;
 };
 
 
