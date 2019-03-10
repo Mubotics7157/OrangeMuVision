@@ -5,8 +5,8 @@
 #include <string.h>
 #include "opencv2/opencv.hpp"
 
-namespace OrangeVision {
-
+namespace ov {
+	//Make class
 	std::vector<cv::Point3f> textToPoints(std::string text, int xOffset, int yOffset) {	
 		double fontScale = 4;
 		cv::Size textSize = cv::getTextSize(text, 1, fontScale, 1, 0);

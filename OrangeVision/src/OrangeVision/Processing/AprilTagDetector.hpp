@@ -1,11 +1,12 @@
 #pragma once
 #ifndef APRIL_TAG_DETECTOR_HPP
 #define APRIL_TAG_DETECTOR_HPP
+#include <vector>
+#include <memory>
+#include <opencv2\opencv.hpp>
 #include "TagFamily.h"
 #include "TagDetector.h"
 #include "TagDetection.h"
-#include <vector>
-#include <memory>
 
 class AprilTagDetector {
 	public:
