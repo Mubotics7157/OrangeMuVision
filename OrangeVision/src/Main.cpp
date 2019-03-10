@@ -1,26 +1,11 @@
-<<<<<<< HEAD
+
 #include "opencv2\opencv.hpp"
-=======
-#include "Processing\AprilTagDetector.hpp"
-#include "opencv2\opencv.hpp"
-#include "AprilTags\include\Tag36h15.h"
->>>>>>> cbb34d6a81e95e2fd0a2a6e4c91d530ef8ecdc19
 #include <iostream>
 #include <fstream>
 #include <chrono>
 #include <memory>
 #include "nholmann\json.hpp"
-<<<<<<< HEAD
 #include "OrangeVision.hpp"
-=======
-#include "Processing\TestProcessor.hpp"
-#include "Input\ImageReader.hpp"
-#include "Threading\OrangeThread.hpp"
-#include "Output\FakeHandler.hpp"
-#include "Threading\ConcurrentStream.hpp"
-#include "Utils\CalibrationUtil.hpp"
-#include "Input\Undistort.hpp"
->>>>>>> cbb34d6a81e95e2fd0a2a6e4c91d530ef8ecdc19
 
 int main() {	
 	cv::Mat intrins, distCoeff;
