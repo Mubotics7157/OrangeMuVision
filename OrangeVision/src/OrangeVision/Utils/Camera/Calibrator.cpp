@@ -13,13 +13,16 @@ namespace ov {
 		if (m_imgSize.empty()) {
 			m_imgSize = img.size();
 		}
-		bool found = cv::findChessboardCorners(img, m_boardSize, m_cornerPoints, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+		cv::Mat gray;
+		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+		bool found = cv::findChessboardCorners(gray, m_boardSize, m_cornerPoints, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
 		if (found) {
-			cv::drawChessboardCorners(img, m_boardSize, m_cornerPoints, found);
 			if (add) {
+				cv::cornerSubPix(gray, m_cornerPoints, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 10, 0.01));
 				m_imagePoints.push_back(m_cornerPoints);
 				m_objectPoints.push_back(m_chessPoints);
 			}
+			cv::drawChessboardCorners(img, m_boardSize, m_cornerPoints, found);
 
 		}
 

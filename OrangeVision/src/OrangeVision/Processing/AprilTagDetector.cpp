@@ -27,8 +27,9 @@ std::vector<AprilTagDetector::TagData> AprilTagDetector::detect(cv::Mat& img) {
 		for (int i = 0; i < 4; ++i) {
 			corners.push_back(cv::Point2f(detection.p[i].first, detection.p[i].second));
 		}
+		cv::cornerSubPix(img, corners, cv::Size(2, 2), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 10, 0.01));
 		std::vector<cv::Point3f> obj;
-		double size = 165;
+		double size = 5 + 1.5/16.0;
 		obj.push_back(cv::Point3f(-size / 2, -size / 2, 0));
 		obj.push_back(cv::Point3f(size / 2, -size / 2, 0));
 		obj.push_back(cv::Point3f(size / 2, size / 2, 0));

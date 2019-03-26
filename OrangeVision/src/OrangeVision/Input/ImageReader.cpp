@@ -25,12 +25,13 @@ namespace ov {
 			if (m_capture->grab()) {
 				m_capture->retrieve(m_imgBuffer);
 				captureLock.unlock();
+				//cv::rotate(m_imgBuffer, m_imgBuffer, cv::ROTATE_90_CLOCKWISE);
 				m_imgStream->write(m_imgBuffer);
 			}
 			else {
 				m_capture->release();
 			}
-			Sleep(100);
+			Sleep(125);
 		}
 	}
 }

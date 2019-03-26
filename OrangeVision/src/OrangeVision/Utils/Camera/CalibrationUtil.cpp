@@ -49,8 +49,17 @@ namespace ov {
 				else {
 					m_calibrator.detect(m_data, false);
 				}
+				if (key == 'c') {
+					std::cout << "Calibrating" << std::endl;
+					m_calibrator.calibrate();
+					m_calibrator.saveTo("config.txt");
+					std::cout << "Saved" << std::endl;
+				}
 			}
-			//cv::imshow("Calibration", m_data);
+			cv::Mat out;
+			cv::resize(m_data, out, cv::Size(0, 0), 0.5, 0.5);
+
+			cv::imshow("Calibration", out);
 		}
 	}
 }
