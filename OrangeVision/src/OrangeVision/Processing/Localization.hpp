@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TEST_PROCESSOR_HPP
-#define TEST_PROCESSOR_HPP
+#ifndef LOCALIZATION_HPP
+#define LOCALIZATION_HPP
 #include <mutex>
 #include "Threading\Updateable.hpp"
 #include "Threading\ConcurrentStreamReader.hpp"
@@ -11,10 +11,10 @@
 #include "Tag36h15.h"
 
 namespace ov {
-	class TestProcessor : public Updateable {
+	class Localization : public Updateable {
 	public:
 		//Only takes in a stream of cv::Mat
-		TestProcessor(std::shared_ptr<ConcurrentStream<cv::Mat>> inputStream, cv::Mat intrins, cv::Mat distCoeff)
+		Localization(std::shared_ptr<ConcurrentStream<cv::Mat>> inputStream, cv::Mat intrins, cv::Mat distCoeff)
 			: m_inputStream(inputStream), m_detector(AprilTags::tagCodes36h15, intrins, distCoeff) {
 			m_outputStream = std::make_shared<ConcurrentStream<nlohmann::json>>();
 			m_intrins.write(intrins);
@@ -25,7 +25,6 @@ namespace ov {
 			std::ifstream ifs("class_data.json");
 			nlohmann::json json;
 			ifs >> json;
-			std::string location = IdToClass::Map[3];
 			cv::Mat intrins, distCoeff;
 			m_intrins.read(intrins);
 			m_distCoeff.read(distCoeff);
@@ -39,44 +38,19 @@ namespace ov {
 						corners.push_back(cv::Point2f(tagData.tagDetection.p[i].first, tagData.tagDetection.p[i].second));
 						cv::line(m_data, cv::Point(tagData.tagDetection.p[i].first, tagData.tagDetection.p[i].second), cv::Point(tagData.tagDetection.p[(i + 1) % 4].first, tagData.tagDetection.p[(i + 1) % 4].second), cv::Scalar(0, 0, i * 80), 1);
 					}
-					int xOffset = 0;
-					int yOffset = 0;
-					std::string text(json[location][m_class].dump(2));
-					if (m_updateConsole) {
-						system("cls");
-						std::cout << json[location][m_class].dump(2);
-						m_updateConsole = false;
+					cv::Mat R;
+					cv::Rodrigues(tagData.rvecs, R);
+					R = R.t();
+					cv::Mat invTvec = -R * tagData.tvecs;
+					std::cout << invTvec.cols << " " << invTvec.rows << std::endl;
+					for (int i = 0; i < invTvec.rows; ++i) {
+						std::cout << invTvec.at<float>(0, i) << " ";
 					}
-					std::string line;
-					std::stringstream ss(text);
-					while (std::getline(ss, line)) {
-						std::vector<cv::Point3f> textPoints = ov::textToPoints(line, 57 * xOffset, 700 * yOffset);
-						std::vector<cv::Point2f> imgPoints;
-						cv::projectPoints(textPoints, tagData.rvecs, tagData.tvecs, intrins, distCoeff, imgPoints);
-						for (auto point : imgPoints) {
-							cv::circle(m_data, point, 1, cv::Scalar(0, 255, 0));
-						}
-						if (xOffset == 28) {
-							xOffset = 0;
-							yOffset++;
-						}
-						xOffset++;
-					}
-
+					std::cout << std::endl;
 				}
-
+				cv::resize(m_data, m_data, cv::Size(0, 0), 0.5, 0.5);
 				cv::imshow("test", m_data);
 				char key = cv::waitKey(1);
-				if (key == 'a') {
-					m_class--;
-					m_updateConsole = true;
-				}
-				else if (key == 'd') {
-					m_class++;
-					m_updateConsole = true;
-				}
-				m_class = m_class % json[location].size();
-				std::cout << key << std::endl;
 			}
 			return json;
 		}
@@ -113,7 +87,6 @@ namespace ov {
 		AprilTagDetector m_detector;
 		ConcurrentStream<cv::Mat> m_intrins;
 		ConcurrentStream<cv::Mat> m_distCoeff;
-		bool m_updateConsole = true;
 		int m_class = 0;
 	};
 }

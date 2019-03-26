@@ -9,7 +9,7 @@ namespace ov {
 	template <typename T>
 	class ConcurrentStream {
 	public:
-		void write(T& data) {
+		void write(const T& data) {
 			std::unique_lock<std::shared_mutex> dataLock(m_dataLock);
 			m_lastData = data;
 			dataLock.unlock();

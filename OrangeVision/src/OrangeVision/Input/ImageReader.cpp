@@ -1,4 +1,5 @@
 #include "ImageReader.hpp"
+#include <Windows.h>
 
 namespace ov {
 	ImageReader::ImageReader(std::shared_ptr<cv::VideoCapture> capture) {
@@ -29,6 +30,7 @@ namespace ov {
 			else {
 				m_capture->release();
 			}
+			Sleep(100);
 		}
 	}
 }

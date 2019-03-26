@@ -28,17 +28,12 @@ std::vector<AprilTagDetector::TagData> AprilTagDetector::detect(cv::Mat& img) {
 			corners.push_back(cv::Point2f(detection.p[i].first, detection.p[i].second));
 		}
 		std::vector<cv::Point3f> obj;
-		obj.push_back(cv::Point3f(0, 0, 0));
-		obj.push_back(cv::Point3f(30.75 * 2, 0, 0));
-		obj.push_back(cv::Point3f(30.75 * 2, 30.75 * 2, 0));
-		obj.push_back(cv::Point3f(0, 30.75 * 2, 0));
+		double size = 165;
+		obj.push_back(cv::Point3f(-size / 2, -size / 2, 0));
+		obj.push_back(cv::Point3f(size / 2, -size / 2, 0));
+		obj.push_back(cv::Point3f(size / 2, size / 2, 0));
+		obj.push_back(cv::Point3f(-size / 2, size / 2, 0));
 		std::vector<cv::Point2f> imgPoints;
-		std::vector<cv::Point3f> axis;
-
-		axis.push_back(cv::Point3f(0, 0, 0));
-		axis.push_back(cv::Point3f(30.75, 0, 0));
-		axis.push_back(cv::Point3f(0, 30.75, 0));
-		axis.push_back(cv::Point3f(0, 0, 30.75));
 
 		cv::solvePnP(obj, corners, m_intrins, m_distCoeff, data.rvecs, data.tvecs);
 		tagsData[detection.id] = data;

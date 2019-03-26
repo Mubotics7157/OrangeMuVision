@@ -2,13 +2,21 @@
 
 namespace ov {
 	OrangeThread::OrangeThread(const std::vector<std::shared_ptr<Updateable>>& updaters) {
-		m_updaters = updaters;
+		m_updaters.write(updaters);
 		m_thread = std::make_unique<std::thread>(&OrangeThread::update, this);
 	}
 
 	OrangeThread::OrangeThread(std::vector<std::shared_ptr<Updateable>>&& updaters) {
-		m_updaters = std::move(updaters);
+		m_updaters.write(updaters);
 		m_thread = std::make_unique<std::thread>(&OrangeThread::update, this);
+	}
+
+	void OrangeThread::setUpdateable(const std::vector<std::shared_ptr<Updateable>>& updaters) {
+		m_updaters.write(updaters);
+	}
+
+	void OrangeThread::setUpdateable(std::vector<std::shared_ptr<Updateable>>&& updaters) {
+		m_updaters.write(updaters);
 	}
 
 	OrangeThread::~OrangeThread() {
@@ -26,9 +34,11 @@ namespace ov {
 
 	//May not exit if thread locks
 	void OrangeThread::update() {
+		std::vector<std::shared_ptr<Updateable>> updaters;
 		while (isAlive.load(std::memory_order_acquire)) {
 			if (isRunning.load(std::memory_order_acquire)) {
-				for (auto updater : m_updaters) {
+				m_updaters.read(updaters);
+				for (auto updater : updaters) {
 					updater->update();
 				}
 			}

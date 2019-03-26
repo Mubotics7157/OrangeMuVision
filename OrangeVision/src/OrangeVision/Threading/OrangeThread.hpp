@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include "Updateable.hpp"
+#include "ConcurrentStream.hpp"
 
 namespace ov {
 	class OrangeThread {
@@ -16,6 +17,8 @@ namespace ov {
 		~OrangeThread();
 		void start();
 		void stop();
+		void setUpdateable(const std::vector<std::shared_ptr<Updateable>>& updater);
+		void setUpdateable(std::vector<std::shared_ptr<Updateable>>&& updater);
 	private:
 		void update();
 		void release();
@@ -24,7 +27,7 @@ namespace ov {
 		std::atomic<bool> isAlive = true;
 		std::atomic<bool> isRunning = true;
 		std::unique_ptr<std::thread> m_thread{ nullptr };
-		std::vector<std::shared_ptr<Updateable>> m_updaters;
+		ConcurrentStream<std::vector<std::shared_ptr<Updateable>>> m_updaters;
 	};
 }
 #endif

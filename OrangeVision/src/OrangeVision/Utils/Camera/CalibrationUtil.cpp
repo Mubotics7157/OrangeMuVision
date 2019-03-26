@@ -37,17 +37,20 @@ namespace ov {
 				if (m_limit > m_success) {
 					if (m_calibrator.detect(m_data, true)) {
 						++m_success;
+						std::cout << "Added" << std::endl;
 					}
 					if (m_limit == m_success) {
+						std::cout << "Calibrating" << std::endl;
 						m_calibrator.calibrate();
 						m_calibrator.saveTo("config.txt");
+						std::cout << "Saved" << std::endl;
 					}
 				}
 				else {
 					m_calibrator.detect(m_data, false);
 				}
 			}
-			cv::imshow("Calibration", m_data);
+			//cv::imshow("Calibration", m_data);
 		}
 	}
 }

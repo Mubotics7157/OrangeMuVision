@@ -5,5 +5,6 @@
 
 #include "Processing\AprilTagDetector.hpp"
 #include "Processing\TestProcessor.hpp"
+#include "Processing\Localization.hpp"
 
 #endif
