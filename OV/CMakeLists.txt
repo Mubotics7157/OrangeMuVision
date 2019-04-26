@@ -14,6 +14,7 @@ set(OUTPUT_SOURCES)
 set(OUTPUT_INCLUDES
 	Output/Display.hpp
 	Output/FakeHandler.hpp
+	Output/Stream.hpp
 )
 #add_subdirectory(Processing)
 set(PROCESSING_SOURCES
@@ -24,6 +25,7 @@ set(PROCESSING_INCLUDES
 	Processing/DrawClasses.hpp
 	Processing/Localization.hpp
 	Processing/TestProcessor.hpp
+	Processing/FRCVision.hpp
 )
 #add_subdirectory(Threading)
 set(THREADING_SOURCES

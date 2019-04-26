@@ -17,17 +17,17 @@ namespace ov {
 		//Only takes in a stream of cv::Mat
 		Localization(std::shared_ptr<ConcurrentStream<cv::Mat>> inputStream, cv::Mat intrins, cv::Mat distCoeff)
 			: m_inputStream(inputStream), m_detector(AprilTags::tagCodes25h7, intrins, distCoeff) {
-			m_outputStream = std::make_shared<ConcurrentStream<nlohmann::json>>();
+			m_outputStream = std::make_shared<ConcurrentStream<cv::Mat>>();
 			m_intrins.write(intrins);
 			m_distCoeff.write(distCoeff);
 		}
 
-		nlohmann::json process() {
-			nlohmann::json json;
+		cv::Mat process() {
 			cv::Mat intrins, distCoeff;
 			m_intrins.read(intrins);
 			m_distCoeff.read(distCoeff);
 			if (!m_data.empty()) {
+        /*
 				cv::Mat gray;
 				cv::cvtColor(m_data, gray, cv::COLOR_BGR2GRAY);
 				std::vector<AprilTagDetector::TagData> tagDatas = m_detector.detect(gray);
@@ -55,11 +55,9 @@ namespace ov {
 					cv::putText(m_data, std::to_string(z), cv::Point(tagData.tagDetection.cxy.first, tagData.tagDetection.cxy.second + 100), 1, 3, cv::Scalar(0, 0, 255), 4);
 					cv::putText(m_data, std::to_string(distance), cv::Point(tagData.tagDetection.cxy.first, tagData.tagDetection.cxy.second + 150), 1, 3, cv::Scalar(0, 0, 255), 4);
 				}
-				cv::resize(m_data, m_data, cv::Size(0, 0), 0.5, 0.5);
-				cv::imshow("test", m_data);
-				char key = cv::waitKey(1);
+        */
 			}
-			return json;
+      return m_data;
 		}
 
 		void setInputStream(std::shared_ptr<ConcurrentStream<cv::Mat>> inputStream) {
@@ -67,7 +65,7 @@ namespace ov {
 			m_inputStream.setStream(inputStream);
 		}
 
-		std::shared_ptr<ConcurrentStream<nlohmann::json>> getJsonStream() {
+		std::shared_ptr<ConcurrentStream<cv::Mat>> getImgStream() {
 			return m_outputStream;
 		}
 
@@ -75,7 +73,7 @@ namespace ov {
 			std::unique_lock<std::mutex> inputLock(m_inputLock);
 			m_inputStream.read(m_data);
 			inputLock.unlock();
-			m_outputStream->write(process());
+			m_outputStream->write(process().clone());
 		}
 
 		void updateIntrins(cv::Mat intrins) {
@@ -90,7 +88,7 @@ namespace ov {
 		cv::Mat m_data;
 		std::mutex m_inputLock;
 		ConcurrentStreamReader<cv::Mat> m_inputStream;
-		std::shared_ptr<ConcurrentStream<nlohmann::json>> m_outputStream;
+		std::shared_ptr<ConcurrentStream<cv::Mat>> m_outputStream;
 		AprilTagDetector m_detector;
 		ConcurrentStream<cv::Mat> m_intrins;
 		ConcurrentStream<cv::Mat> m_distCoeff;

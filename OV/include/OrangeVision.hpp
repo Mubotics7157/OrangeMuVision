@@ -6,6 +6,6 @@
 #include "Threading.hpp"
 #include "Utils.hpp"
 #include "Processing.hpp"
-
+#include "Output.hpp"
 
 #endif

@@ -1,5 +1,5 @@
 #include "ImageReader.hpp"
-
+#include <iostream>
 namespace ov {
 	ImageReader::ImageReader(std::shared_ptr<cv::VideoCapture> capture) {
 		std::unique_lock<std::mutex> captureLock(m_captureLock);
@@ -25,7 +25,7 @@ namespace ov {
 				m_capture->retrieve(m_imgBuffer);
 				captureLock.unlock();
 				//cv::rotate(m_imgBuffer, m_imgBuffer, cv::ROTATE_90_CLOCKWISE);
-				m_imgStream->write(m_imgBuffer);
+				m_imgStream->write(m_imgBuffer.clone());
 			}
 			else {
 				m_capture->release();
