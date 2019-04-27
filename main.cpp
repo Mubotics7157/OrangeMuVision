@@ -10,7 +10,7 @@
 int main() {	
 	cv::Mat intrins, distCoeff;
 	ov::Calibrator::loadFrom("./OrangeVision/config.txt", intrins, distCoeff);
-	std::shared_ptr<cv::VideoCapture> capture = std::make_shared<cv::VideoCapture>("v4l2src device=/dev/video0 ! video/x-raw, width=640, height=480, framerate=90/1 ! videoconvert ! appsink");
+	std::shared_ptr<cv::VideoCapture> capture = std::make_shared<cv::VideoCapture>("v4l2src device=/dev/video0 ! video/x-raw, width=320, height=240, framerate=90/1 ! videoconvert ! appsink");
 
 	auto reader = std::make_shared<ov::ImageReader>(capture);
 	auto undistort = std::make_shared<ov::Undistort>(intrins, distCoeff, reader->getImgStream());
@@ -19,7 +19,7 @@ int main() {
   auto stream = std::make_shared<ov::Stream>(processor->getImgStream(), "appsrc ! videoconvert ! video/x-raw, format=I420 ! omxh264enc ! rtph264pay ! udpsink host=192.168.0.155 port=5800");
 	ov::OrangeThread readingThread({reader});
 	ov::OrangeThread processingThread({processor});
-  //ov::OrangeThread streamingThread({stream});
+  ov::OrangeThread streamingThread({stream});
  
 	while (true) {
 		/*
