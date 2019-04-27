@@ -16,10 +16,10 @@ int main() {
 	auto undistort = std::make_shared<ov::Undistort>(intrins, distCoeff, reader->getImgStream());
 	auto processor = std::make_shared<ov::FRCVision>(reader->getImgStream());
 	auto calib = std::make_shared<ov::CalibrationUtil>(200, cv::Size(9, 6), 1, reader->getImgStream());
-  auto stream = std::make_shared<ov::Stream>(processor->getImgStream(), "appsrc ! videoconvert ! video/x-raw, format=I420 ! omxh264enc ! rtph264pay ! udpsink host=192.168.0.155 port=5800");
+    auto stream = std::make_shared<ov::Stream>(processor->getImgStream(), "appsrc ! videoconvert ! video/x-raw, format=I420 ! omxh264enc ! rtph264pay ! udpsink host=192.168.0.155 port=5800");
 	ov::OrangeThread readingThread({reader});
 	ov::OrangeThread processingThread({processor});
-  ov::OrangeThread streamingThread({stream});
+    ov::OrangeThread streamingThread({stream});
  
 	while (true) {
 		/*
