@@ -7,6 +7,7 @@
 #include <chrono>
 #include <math.h>
 #include <string>
+#include <vector>
 
 #define COLOR_WHITE cv::Scalar(255, 255, 255)	//bgr color space...
 #define COLOR_RED cv::Scalar(0, 0, 255)
@@ -20,27 +21,18 @@ namespace ov {
             : m_inputStream(inputStream) {
             m_outputStream = std::make_shared<ConcurrentStream<cv::Mat>>();        
             //kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
-            prevTime = std::chrono::high_resolution_clock::now();
+            fpsA = std::vector<std::chrono::high_resolution_clock::time_point>(45, std::chrono::high_resolution_clock::now());
         }
           
         void update() {        
             m_inputStream.read(m_data);
             if(!m_data.empty()) {                
-                auto cur = std::chrono::high_resolution_clock::now();
                 c+=1;
-                std::stringstream logLine;
-              
-              
-              
-                double deltaT = ((double)std::chrono::duration_cast<std::chrono::milliseconds>(cur-prevTime).count());
-                fpsA[c%15] = 1000.0/deltaT;
-                double fps = 0;
-                for(int i = 0; i < 15; i++) fps+=fpsA[i];
-                fps /= 15;
-                prevTime = cur;
-             
-             
-
+                fpsA[c % 45] = std::chrono::high_resolution_clock::now();
+                             
+                double fps = 1000.0 * 45.0 / (std::chrono::duration_cast<std::chrono::milliseconds>(fpsA[c % 45] - fpsA[(unsigned)(c + 1) % 45]).count());
+                
+                
                 auto start = std::chrono::high_resolution_clock::now();
                 cv::Mat channels[3];
                 std::vector<std::vector<cv::Point>> contours;
@@ -150,11 +142,11 @@ namespace ov {
 
                 char fpsStr[5];
                 sprintf(fpsStr, "%.0f", fps);
-                cv::putText(m_data, fpsStr, cv::Point(590, 10), cv::FONT_HERSHEY_SIMPLEX, 0.5, COLOR_RED, 2, cv::LINE_AA);
+                cv::putText(m_data, fpsStr, cv::Point(10, 10), cv::FONT_HERSHEY_SIMPLEX, 0.5, COLOR_RED, 2, cv::LINE_AA);
 
                 if(isDebugging || isPrinting) {            
-                    std::cout << diff.count() << "  " << diff1.count() << "  " << diff2.count() << "  " << diff3.count() << "  " << diff4.count() << std::endl;   
-                    std::cout << "fps: " << fpsStr << std::endl;       
+                    std::cout << diff.count() << "  " << diff1.count() << "  " << diff2.count() << "  " << diff3.count() << "  " << diff4.count() << "  num contours: " << std::to_string(contours.size()) << std::endl;   
+                    std::cout << "fps: " << std::to_string(fps) << "  possible fps: " << std::to_string(1000.0 / diff4.count()) << std::endl;       
                 }
                  
                
@@ -162,21 +154,20 @@ namespace ov {
             }
         }
     
-		std::shared_ptr<ConcurrentStream<cv::Mat>> getImgStream() {
-			return m_outputStream;
-		}
+        std::shared_ptr<ConcurrentStream<cv::Mat>> getImgStream() {
+            return m_outputStream;
+        }
 
     
     private:
 
         bool isDebugging = false;
         bool isPrinting = true;
-        std::chrono::high_resolution_clock::time_point prevTime;
-        int c = 0;
+        unsigned int c = 0;
         cv::Mat m_data;
         ConcurrentStreamReader<cv::Mat> m_inputStream;
         std::shared_ptr<ConcurrentStream<cv::Mat>> m_outputStream;
-        double fpsA[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        std::vector<std::chrono::high_resolution_clock::time_point> fpsA;
   
     };
 }
