@@ -8,14 +8,14 @@
 #include "Utils/TextToPoints.hpp"
 #include "Utils/IdToClass.hpp"
 #include "nholmann/json.hpp"
-#include "AprilTags/Tag36h15.h"
+#include "AprilTags/Tag36h11.h"
 
 namespace ov {
 	class TestProcessor : public Updateable {
 	public:
 		//Only takes in a stream of cv::Mat
 		TestProcessor(std::shared_ptr<ConcurrentStream<cv::Mat>> inputStream, cv::Mat intrins, cv::Mat distCoeff)
-			: m_inputStream(inputStream), m_detector(AprilTags::tagCodes36h15, intrins, distCoeff) {
+			: m_inputStream(inputStream), m_detector(AprilTags::tagCodes36h11, intrins, distCoeff) {
 			m_outputStream = std::make_shared<ConcurrentStream<nlohmann::json>>();
 			m_intrins.write(intrins);
 			m_distCoeff.write(distCoeff);

@@ -8,7 +8,7 @@
 #include "Utils/TextToPoints.hpp"
 #include "Utils/IdToClass.hpp"
 #include "nholmann/json.hpp"
-#include "AprilTags/Tag36h15.h"
+#include "AprilTags/Tag36h11.h"
 #include "AprilTags/Tag25h7.h"
 
 namespace ov {

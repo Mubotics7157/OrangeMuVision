@@ -53,13 +53,11 @@ set(UTILS_INCLUDES
 	Utils/TextToPoints.hpp
 )
 
-find_package(OpenCV REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Eigen3 REQUIRED)
 
-include_directories(${OpenCV_INCLUDE_DIRS})
-include_directories(${CMAKE_INSTALL_PREFIX}/include/AprilTags/)
-include_directories(${CMAKE_INSTALL_PREFIX}/include/eigen3/)
-include_directories(${CMAKE_SOURCE_DIR}/3rdparty/)
+include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(${APRILTAGS_DIR}/include/)
 include_directories(include .)
 
 add_library(OV 
@@ -76,5 +74,5 @@ add_library(OV
 )
 
 target_link_libraries(OV ${OpenCV_LIBS})
-target_link_libraries(OV ${CMAKE_INSTALL_PREFIX}/lib/libapriltags.a)
+target_link_libraries(OV ${APRILTAGS_DIR}/lib/apriltags.lib)
 target_link_libraries(OV Threads::Threads)

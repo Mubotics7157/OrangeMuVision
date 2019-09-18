@@ -4,9 +4,9 @@
 #include <vector>
 #include <memory>
 #include <opencv2/opencv.hpp>
-#include "AprilTags/TagFamily.h"
-#include "AprilTags/TagDetector.h"
-#include "AprilTags/TagDetection.h"
+#include <AprilTags/TagFamily.h>
+#include <AprilTags/TagDetector.h>
+#include <AprilTags/TagDetection.h>
 
 class AprilTagDetector {
 	public:

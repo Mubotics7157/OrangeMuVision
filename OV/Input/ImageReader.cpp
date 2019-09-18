@@ -1,5 +1,5 @@
 #include "ImageReader.hpp"
-#include <unistd.h>
+//#include <unistd.h>
 namespace ov {
 	ImageReader::ImageReader(std::shared_ptr<cv::VideoCapture> capture) {
 		std::unique_lock<std::mutex> captureLock(m_captureLock);
